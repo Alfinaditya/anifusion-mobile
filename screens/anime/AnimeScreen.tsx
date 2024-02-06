@@ -12,7 +12,12 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AnimeStackParamList } from '../../stacks/AnimeStack';
-import { QueryClient, useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import {
+	QueryClient,
+	useInfiniteQuery,
+	useQuery,
+	useQueryClient,
+} from '@tanstack/react-query';
 import Animes, { Anime } from '../../types/animes';
 import { apiUrl } from '../../lib/consts';
 import { cn } from '../../utils/tw';
@@ -32,12 +37,16 @@ setDefaultProps(TextInput, defaultText);
 
 type Props = NativeStackScreenProps<AnimeStackParamList, 'Anime'>;
 const AnimeScreen: React.FC<Props> = ({ navigation, route }) => {
-	const [page, setPage] = useState(1);
+	const [isRefreshing, setIsRefreshing] = useState(false);
 	const query = useAnimeStore((state) => state.query);
 	const filterParams = useAnimeStore((state) => state.filterParams);
+	const page = useAnimeStore((state) => state.page);
+	const setPage = useAnimeStore((state) => state.setPage);
+	const queryClient = useQueryClient();
 
 	const API_URL = `${apiUrl}/anime`;
 	async function fetchAnime({ pageParam = 1 }) {
+		setPage({ page: pageParam });
 		const res = await axios.get(API_URL, {
 			params: {
 				status: filterParams.status,
@@ -47,6 +56,7 @@ const AnimeScreen: React.FC<Props> = ({ navigation, route }) => {
 				sort: filterParams.sort,
 				page: pageParam,
 				limit: 6,
+				q: query,
 			},
 		});
 		return res.data;
@@ -60,15 +70,25 @@ const AnimeScreen: React.FC<Props> = ({ navigation, route }) => {
 		isFetching,
 		isFetchingNextPage,
 		isLoading,
+		refetch,
 	} = useInfiniteQuery<Animes, Error>({
-		queryKey: ['animes'],
+		queryKey: [
+			'animes',
+			{
+				status: filterParams.status,
+				type: filterParams.type,
+				rating: filterParams.rating,
+				order_by: filterParams.orderBy,
+				sort: filterParams.sort,
+				limit: 6,
+				page: page,
+				q: query,
+			},
+		],
 		queryFn: fetchAnime,
 		getNextPageParam: (lastPage, pages) => lastPage.pagination.current_page + 1,
 	});
 
-	// function handleNextPage() {
-	// fetch(API_URL)
-	// }
 	const flatListRef = useRef<FlatList<Anime> | null>(null);
 	const flatListRefLoading = useRef<FlatList | null>(null);
 
@@ -79,7 +99,8 @@ const AnimeScreen: React.FC<Props> = ({ navigation, route }) => {
 				'rounded-lg',
 				'justify-center',
 				'mb-4',
-				'active:opacity-[0.5]'
+				'active:opacity-[0.5]',
+				'w-[46vw]'
 			)}
 		>
 			<Image
@@ -89,7 +110,7 @@ const AnimeScreen: React.FC<Props> = ({ navigation, route }) => {
 					uri: item.images.jpg.image_url,
 				}}
 			/>
-			<View className="mt-2 w-[46vw]">
+			<View className="mt-2">
 				<Text
 					numberOfLines={1}
 					style={{ fontFamily: font.quicksand.bold }}
@@ -111,20 +132,20 @@ const AnimeScreen: React.FC<Props> = ({ navigation, route }) => {
 		</Pressable>
 	);
 	const renderItemLoading = () => (
-		<>
-			<View className="mb-4">
-				<Skeleton width={190} height={190} colorMode="light" />
-				<View className="mt-3">
-					<Skeleton width={190} height={20} colorMode="light" />
-				</View>
-				<View className="mt-3">
-					<Skeleton width={120} height={20} colorMode="light" />
-				</View>
-				<View className="mt-3">
-					<Skeleton width={70} height={20} colorMode="light" />
-				</View>
+		<View className="w-[46vw] mb-4">
+			<View>
+				<Skeleton width={'100%'} height={190} colorMode="light" />
 			</View>
-		</>
+			<View className="mt-3">
+				<Skeleton width={'80%'} height={20} colorMode="light" />
+			</View>
+			<View className="mt-3">
+				<Skeleton width={'45%'} height={20} colorMode="light" />
+			</View>
+			<View className="mt-3">
+				<Skeleton width={'60%'} height={20} colorMode="light" />
+			</View>
+		</View>
 	);
 
 	// if (isLoading) return <Text>Loading</Text>;
@@ -193,6 +214,13 @@ const AnimeScreen: React.FC<Props> = ({ navigation, route }) => {
 							<FlatList
 								ref={flatListRef}
 								data={animes && animes.pages.map((page) => page.data).flat()}
+								onRefresh={() => {
+									setIsRefreshing(true);
+									refetch().then(() => {
+										setIsRefreshing(false);
+									});
+								}}
+								refreshing={isRefreshing}
 								renderItem={renderItem}
 								contentContainerStyle={{ paddingBottom: 200 }}
 								columnWrapperStyle={{ justifyContent: 'space-between' }}

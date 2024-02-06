@@ -66,7 +66,7 @@ const AnimeDetailsScreen: React.FC<Props> = ({ navigation, route }) => {
 						<View>
 							<AppBar
 								backAction={() => {
-									navigation.navigate('Anime');
+									navigation.goBack();
 								}}
 							/>
 						</View>
@@ -172,11 +172,11 @@ const AnimeDetailsScreen: React.FC<Props> = ({ navigation, route }) => {
 						keyExtractor={(item) => item.name}
 					/>
 				)}
-				<View className="justify-center items-center">
+				<View className="justify-center items-center mt-10 mb-8">
 					<View className="w-[95%]">
 						<Text
 							style={{ fontFamily: font.quicksand.semiBold }}
-							className="mt-10 mb-8  text-2xl"
+							className="text-2xl"
 							numberOfLines={2}
 						>
 							Characters
@@ -184,11 +184,11 @@ const AnimeDetailsScreen: React.FC<Props> = ({ navigation, route }) => {
 					</View>
 				</View>
 				<Characters id={route.params.id} />
-				<View className="justify-center items-center">
+				<View className="justify-center items-center mt-10 mb-8">
 					<View className="w-[95%]">
 						<Text
 							style={{ fontFamily: font.quicksand.semiBold }}
-							className="mt-10 mb-8 text-2xl"
+							className=" text-2xl"
 							numberOfLines={2}
 						>
 							Recommendations

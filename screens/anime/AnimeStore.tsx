@@ -10,8 +10,10 @@ interface FilterParams {
 interface AnimeState {
 	filterParams: FilterParams;
 	query: string;
+	page: number;
 	setFilterParams: (props: FilterParams) => void;
 	setQuery: (props: { query: string }) => void;
+	setPage: (props: { page: number }) => void;
 	resetFilter: () => void;
 }
 const initialState = {
@@ -27,9 +29,14 @@ const initialState = {
 const useAnimeStore = create<AnimeState>()((set) => ({
 	filterParams: initialState.filterParams,
 	query: initialState.query,
+	page: 1,
 	setQuery: (by) =>
 		set(() => ({
 			query: by.query,
+		})),
+	setPage: (by) =>
+		set(() => ({
+			page: by.page,
 		})),
 	setFilterParams: (by) =>
 		set(() => ({

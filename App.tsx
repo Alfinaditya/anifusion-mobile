@@ -15,9 +15,10 @@ import {
 	Quicksand_600SemiBold,
 	Quicksand_700Bold,
 } from '@expo-google-fonts/quicksand';
+import HomeStack from './stacks/HomeStack';
 
-type RootStackParamList = {
-	Home: undefined;
+export type RootStackParamList = {
+	HomeStack: undefined;
 	MangaStack: undefined;
 	AnimeStack: undefined;
 };
@@ -49,7 +50,7 @@ export default function App() {
 							tabBarIcon: ({ focused, color, size }) => {
 								let iconName = '';
 								switch (route.name) {
-									case 'Home':
+									case 'HomeStack':
 										iconName = focused ? 'ios-home' : 'ios-home-outline';
 										break;
 									case 'AnimeStack':
@@ -69,7 +70,7 @@ export default function App() {
 							headerShown: false,
 						})}
 					>
-						<Tab.Screen name="Home" component={HomeScreen} />
+						<Tab.Screen name="HomeStack" component={HomeStack} />
 						<Tab.Screen
 							options={{ tabBarLabel: 'Anime' }}
 							name="AnimeStack"

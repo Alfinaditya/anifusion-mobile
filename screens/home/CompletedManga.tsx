@@ -1,68 +1,126 @@
 import { useQuery } from '@tanstack/react-query';
-import React, { useRef } from 'react';
-import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { Image, Pressable, Text, View } from 'react-native';
 import { apiUrl } from '../../lib/consts';
 import { cn } from '../../utils/tw';
-import Mangas, { Manga } from '../../types/mangas';
+import Mangas from '../../types/mangas';
+import axios from 'axios';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { HomeStackParamList } from '../../stacks/HomeStack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Skeleton } from 'moti/skeleton';
+import font from '../../utils/font';
 
-interface Props {
-  width: number;
-}
+type Props = NativeStackScreenProps<HomeStackParamList, 'Home'>;
+const CompletedManga: React.FC<Props> = ({ navigation, route }) => {
+	const {
+		isLoading,
+		error,
+		data: mangas,
+	} = useQuery<Mangas, Error>({
+		queryKey: ['completedManga'],
+		queryFn: () =>
+			axios
+				.get(`${apiUrl}/manga?status=complete&limit=15`)
+				.then((res) => res.data),
+	});
 
-const CompletedManga: React.FC<Props> = ({ width }) => {
-  const {
-    isLoading,
-    error,
-    data: mangas,
-  } = useQuery<Mangas, Error>({
-    queryKey: ['completedManga'],
-    queryFn: () =>
-      fetch(`${apiUrl}/manga?status=complete&limit=15`).then((res) =>
-        res.json()
-      ),
-  });
-  const flatListRef = useRef<FlatList<Manga> | null>(null);
+	if (error) return <Text>{error.message}</Text>;
 
-  const renderItem = ({ item }: { item: Manga }) => (
-    <TouchableOpacity className={cn('items-center')} style={{ width: width }}>
-      <Image
-        resizeMode="cover"
-        width={150}
-        height={180}
-        source={{
-          uri: item.images.jpg.image_url,
-        }}
-      />
-      <View className="mt-2 w-[150px]">
-        <Text numberOfLines={2} className="text-xs">
-          {item.title}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
+	return (
+		<View className="justify-center items-center">
+			<View className="w-[95%]">
+				<Text
+					style={{ fontFamily: font.quicksand.bold }}
+					className="text-2xl mb-4"
+					numberOfLines={2}
+				>
+					<Text
+						style={{ fontFamily: font.quicksand.bold }}
+						className="text-2xl text-main"
+					>
+						Completed{' '}
+					</Text>
+					Manga
+				</Text>
 
-  if (isLoading) return <Text>Loading</Text>;
-
-  if (error) return <Text>{error.message}</Text>;
-
-  return (
-    <>
-      <Text className="ml-3 mb-4">Completed Manga</Text>
-      {mangas.data.length > 0 ? (
-        <FlatList
-          ref={flatListRef}
-          data={mangas.data}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.mal_id.toString()}
-        />
-      ) : (
-        <Text className="text-center">No Completed Manga</Text>
-      )}
-    </>
-  );
+				{isLoading ? (
+					<View className="flex-row flex-wrap justify-between">
+						{Array.from(Array(6).keys()).map((i) => (
+							<View key={i} className="w-[46vw] mb-4">
+								<View>
+									<Skeleton width={'100%'} height={190} colorMode="light" />
+								</View>
+								<View className="mt-3">
+									<Skeleton width={'80%'} height={20} colorMode="light" />
+								</View>
+								<View className="mt-3">
+									<Skeleton width={'45%'} height={20} colorMode="light" />
+								</View>
+								<View className="mt-3">
+									<Skeleton width={'60%'} height={20} colorMode="light" />
+								</View>
+							</View>
+						))}
+					</View>
+				) : (
+					<>
+						{mangas && mangas.data.length > 0 ? (
+							<View className="flex-row flex-wrap justify-between">
+								{mangas.data.map((manga) => (
+									<Pressable
+										key={manga.mal_id}
+										onPress={() =>
+											navigation.push('AnimeDetails', { id: manga.mal_id })
+										}
+										className={cn(
+											'rounded-lg',
+											'justify-center',
+											'mb-4',
+											'active:opacity-[0.5]',
+											'w-[46vw]'
+										)}
+									>
+										<Image
+											resizeMode="cover"
+											style={{ width: '100%', height: 190 }}
+											source={{
+												uri: manga.images.jpg.image_url,
+											}}
+										/>
+										<View className="mt-2 ">
+											<Text
+												numberOfLines={1}
+												style={{ fontFamily: font.quicksand.bold }}
+												className="text-xs"
+											>
+												{manga.title}
+											</Text>
+											<View className="flex-row items-center">
+												<Ionicons
+													color={'#E46295'}
+													name="ios-star-outline"
+													size={24}
+												/>
+												<Text
+													style={{ fontFamily: font.quicksand.bold }}
+													className="ml-2 text-main"
+												>
+													{manga.score ? manga.score : '-'}
+												</Text>
+											</View>
+										</View>
+									</Pressable>
+								))}
+							</View>
+						) : (
+							<Text className="text-center">No Completed Anime</Text>
+						)}
+					</>
+				)}
+			</View>
+		</View>
+	);
 };
 
 export default CompletedManga;

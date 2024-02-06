@@ -1,22 +1,37 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import UpcomingAnime from './UpcomingAnime';
-import { Dimensions, Pressable, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
 import CompletedAnime from './CompletedAnime';
+import UpcomingManga from './UpcomingManga';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { HomeStackParamList } from '../../stacks/HomeStack';
 import CompletedManga from './CompletedManga';
-import { Text } from 'react-native';
+import { NavigatorScreenParams } from '@react-navigation/native';
+import { AnimeStackParamList } from '../../stacks/AnimeStack';
 // import UpcomingManga from './UpcomingManga';
 
-const { width } = Dimensions.get('window');
-const itemWidth = width / 2.1; // Adjust as needed
-const HomeScreen: React.FC = () => {
+type RootStackParamList = {
+	HomeStack: undefined;
+	AnimeStack: NavigatorScreenParams<AnimeStackParamList>;
+};
+type Props = NativeStackScreenProps<RootStackParamList, 'HomeStack'>;
+
+const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
+	// console.log(navigation.);
 	return (
 		<SafeAreaView>
-			<ScrollView>
-				{/* <UpcomingAnime width={itemWidth} />
-        <CompletedAnime width={itemWidth} /> */}
-				{/* <UpcomingManga width={itemWidth} /> */}
-				{/* <CompletedManga width={itemWidth} /> */}
+			<ScrollView
+				contentContainerStyle={{
+					paddingBottom: 90,
+				}}
+				className="h-screen"
+			>
+				<UpcomingAnime navigation={navigation} route={route} />
+				<CompletedAnime navigation={navigation} route={route} />
+				{/* <CompletedAnime navigation={navigation} route={route} />
+				<UpcomingManga navigation={navigation} route={route} />
+				<CompletedManga navigation={navigation} route={route} /> */}
 			</ScrollView>
 		</SafeAreaView>
 	);
