@@ -12,7 +12,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { apiUrl } from '../../lib/consts';
 import { useQuery } from '@tanstack/react-query';
-import { Anime, AnimeDetails, AnimeGenre } from '../../types/animes';
+import { AnimeDetails, AnimeGenre } from '../../types/animes';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import ImageView from 'react-native-image-viewing';
 import Characters from './Characters';
@@ -20,11 +20,15 @@ import Recommendations from './Recommendations';
 import AppBar from '../../components/AppBar';
 import { cn } from '../../utils/tw';
 import font from '../../utils/font';
+import axios from 'axios';
+import { Skeleton } from 'moti/skeleton';
+import { randomUUID } from 'expo-crypto';
 
 type Props = NativeStackScreenProps<AnimeStackParamList, 'AnimeDetails'>;
 
 const AnimeDetailsScreen: React.FC<Props> = ({ navigation, route }) => {
 	const flatListGenre = useRef<FlatList<AnimeGenre> | null>(null);
+	const flatListGenreLoading = useRef<FlatList | null>(null);
 	const API_URL = `${apiUrl}/anime/${route.params.id}`;
 	const [showPreviewImage, setShowPreviewImage] = useState(false);
 	const {
@@ -32,10 +36,9 @@ const AnimeDetailsScreen: React.FC<Props> = ({ navigation, route }) => {
 		error,
 		data: anime,
 	} = useQuery<AnimeDetails, Error>({
-		queryKey: ['anime'],
-		queryFn: () => fetch(API_URL).then((res) => res.json()),
+		queryKey: [`anime`, route.params.id],
+		queryFn: () => axios.get(API_URL).then((res) => res.data),
 	});
-	if (isLoading) return <Text>Loading</Text>;
 
 	if (error) return <Text>{error.message}</Text>;
 
@@ -49,84 +52,149 @@ const AnimeDetailsScreen: React.FC<Props> = ({ navigation, route }) => {
 			</Text>
 		</View>
 	);
-	console.log(anime);
+	const renderItemGenreLoading = () => (
+		<View className="mb-5 mr-2">
+			<Skeleton radius={'round'} width={90} height={40} colorMode="light" />
+		</View>
+	);
+
 	return (
 		<SafeAreaView>
 			<ScrollView>
-				<View className="mx-3 mb-3">
-					<AppBar
-						backAction={() => {
-							navigation.navigate('Anime');
-						}}
-					/>
-				</View>
-				<Text
-					style={{ fontFamily: font.quicksand.bold }}
-					className={cn('font-medium', ' text-3xl text-center', 'mb-5')}
-				>
-					{anime.data.title}
-				</Text>
-				<ImageView
-					images={[{ uri: anime.data.images.jpg.large_image_url }]}
-					imageIndex={0}
-					visible={showPreviewImage}
-					onRequestClose={() => setShowPreviewImage(false)}
-				/>
-				<Pressable onPress={() => setShowPreviewImage(true)}>
-					<Image
-						resizeMode="stretch"
-						height={500}
-						style={{ width: '95%', alignSelf: 'center' }}
-						source={{
-							uri: anime.data.images.jpg.large_image_url,
-						}}
-					/>
-				</Pressable>
-				<View className="bg-main p-4 mt-2 mx-3 rounded-xl">
-					<Text
-						style={{ fontFamily: font.quicksand.medium }}
-						className="text-white text-center text-xl"
-					>
-						Score
-					</Text>
-				</View>
-				<Text
-					style={{ fontFamily: font.quicksand.bold }}
-					className={cn('text-center text-4xl', 'mt-3', 'mb-5')}
-				>
-					{anime.data.score}
-				</Text>
+				<View className="justify-center items-center">
+					<View className="w-[95%]">
+						<View>
+							<AppBar
+								backAction={() => {
+									navigation.navigate('Anime');
+								}}
+							/>
+						</View>
+						{isLoading ? (
+							<>
+								<View className="mb-5 mt-5">
+									<Skeleton width={'100%'} height={40} colorMode="light" />
+								</View>
+								<View className="mb-5">
+									<Skeleton width={'100%'} height={500} colorMode="light" />
+								</View>
+								<View className="mb-3">
+									<Skeleton width={'100%'} height={70} colorMode="light" />
+								</View>
+								<View className="justify-center items-center mb-5">
+									<Skeleton width={'60%'} height={60} colorMode="light" />
+								</View>
+								<View className="justify-center items-center mb-5">
+									<Skeleton width={'100%'} height={300} colorMode="light" />
+								</View>
+								<View className="justify-center items-center mb-5">
+									<Skeleton width={'100%'} height={30} colorMode="light" />
+								</View>
+								<View className="mb-5">
+									<Skeleton width={'70%'} height={30} colorMode="light" />
+								</View>
+								<View className="mb-5">
+									<Skeleton width={'96%'} height={30} colorMode="light" />
+								</View>
 
-				<YoutubePlayer
-					height={300}
-					play={true}
-					videoId={anime.data.trailer.youtube_id}
-				/>
-				<Text className="mx-2">{anime.data.synopsis}</Text>
-				<FlatList
-					ref={flatListGenre}
-					data={anime.data.genres}
-					horizontal
-					pagingEnabled
-					showsHorizontalScrollIndicator={false}
-					renderItem={renderItemGenre}
-					keyExtractor={(item) => item.name}
-				/>
-				<Text
-					style={{ fontFamily: font.quicksand.semiBold }}
-					className="mt-10 mb-8 ml-2 text-2xl"
-					numberOfLines={2}
-				>
-					Characters
-				</Text>
+								<FlatList
+									ref={flatListGenreLoading}
+									data={new Array(6)}
+									renderItem={renderItemGenreLoading}
+									horizontal
+									pagingEnabled
+									showsHorizontalScrollIndicator={false}
+									keyExtractor={() => randomUUID()}
+								/>
+							</>
+						) : (
+							<>
+								<Text
+									style={{ fontFamily: font.quicksand.bold }}
+									className={cn(
+										'font-medium',
+										' text-3xl text-center',
+										'mb-5',
+										'mt-5'
+									)}
+								>
+									{anime.data.title}
+								</Text>
+								<ImageView
+									images={[{ uri: anime.data.images.jpg.large_image_url }]}
+									imageIndex={0}
+									visible={showPreviewImage}
+									onRequestClose={() => setShowPreviewImage(false)}
+								/>
+								<Pressable onPress={() => setShowPreviewImage(true)}>
+									<Image
+										resizeMode="stretch"
+										height={500}
+										style={{ width: '100%', alignSelf: 'center' }}
+										source={{
+											uri: anime.data.images.jpg.large_image_url,
+										}}
+									/>
+								</Pressable>
+								<View className="bg-main p-4 mt-5 mb-3 rounded-xl">
+									<Text
+										style={{ fontFamily: font.quicksand.medium }}
+										className="text-white text-center text-xl"
+									>
+										Score
+									</Text>
+								</View>
+								<Text
+									style={{ fontFamily: font.quicksand.bold }}
+									className={cn('text-center text-4xl', 'mb-5')}
+								>
+									{anime.data.score}
+								</Text>
+
+								<YoutubePlayer
+									height={300}
+									play={true}
+									videoId={anime.data.trailer.youtube_id}
+								/>
+								<Text>{anime.data.synopsis}</Text>
+							</>
+						)}
+					</View>
+				</View>
+				{!isLoading && (
+					<FlatList
+						ref={flatListGenre}
+						data={anime.data.genres}
+						horizontal
+						pagingEnabled
+						showsHorizontalScrollIndicator={false}
+						renderItem={renderItemGenre}
+						keyExtractor={(item) => item.name}
+					/>
+				)}
+				<View className="justify-center items-center">
+					<View className="w-[95%]">
+						<Text
+							style={{ fontFamily: font.quicksand.semiBold }}
+							className="mt-10 mb-8  text-2xl"
+							numberOfLines={2}
+						>
+							Characters
+						</Text>
+					</View>
+				</View>
 				<Characters id={route.params.id} />
-				<Text
-					style={{ fontFamily: font.quicksand.semiBold }}
-					className="mt-10 mb-8 ml-2 text-2xl"
-					numberOfLines={2}
-				>
-					Recommendations
-				</Text>
+				<View className="justify-center items-center">
+					<View className="w-[95%]">
+						<Text
+							style={{ fontFamily: font.quicksand.semiBold }}
+							className="mt-10 mb-8 text-2xl"
+							numberOfLines={2}
+						>
+							Recommendations
+						</Text>
+					</View>
+				</View>
 				<Recommendations
 					navigation={navigation}
 					route={route}

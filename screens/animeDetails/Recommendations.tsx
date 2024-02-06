@@ -8,9 +8,11 @@ import IRecommendations, {
 import { Image } from 'react-native';
 import { View } from 'react-native';
 import font from '../../utils/font';
-import { Feather } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { AnimeStackParamList } from '../../stacks/AnimeStack';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Skeleton } from 'moti/skeleton';
+import { randomUUID } from 'expo-crypto';
 type Props = NativeStackScreenProps<AnimeStackParamList, 'AnimeDetails'>;
 const Recommendations: React.FC<Props & { id: number }> = ({
 	id,
@@ -20,21 +22,21 @@ const Recommendations: React.FC<Props & { id: number }> = ({
 	const flatListRecommendation = useRef<FlatList<RecommendationsData> | null>(
 		null
 	);
+	const flatListRecommendationLoading = useRef<FlatList | null>(null);
 	const {
 		isLoading,
 		error,
 		data: recommendations,
 	} = useQuery<IRecommendations, Error>({
-		queryKey: ['recommendation'],
+		queryKey: ['recommendation', id],
 		queryFn: () => fetch(API_URL).then((res) => res.json()),
 	});
-	if (isLoading) return <Text>Loading</Text>;
 
 	if (error) return <Text>{error.message}</Text>;
 
 	const renderItemCharacter = ({ item }: { item: RecommendationsData }) => (
 		<Pressable
-			className="active:bg-gray-200"
+			className="active:opacity-[0.5]"
 			onPress={() => navigation.push('AnimeDetails', { id: item.entry.mal_id })}
 		>
 			<Image
@@ -53,32 +55,74 @@ const Recommendations: React.FC<Props & { id: number }> = ({
 				{item.entry.title}
 			</Text>
 			<View className="flex-row items-center mt-2">
-				<Feather name="thumbs-up" size={20} color="#E4629" />
+				<MaterialCommunityIcons
+					name="thumb-up-outline"
+					size={24}
+					color="#E46295"
+				/>
 				<Text className="ml-2">{item.votes}</Text>
 			</View>
 		</Pressable>
 	);
 
+	const renderItemCharacterLoading = () => (
+		<View>
+			<View>
+				<Skeleton width={200} height={300} colorMode="light" />
+			</View>
+			<View className="mt-4 mb-3">
+				<Skeleton width={180} height={30} colorMode="light" />
+			</View>
+			<View>
+				<Skeleton width={80} height={30} colorMode="light" />
+			</View>
+		</View>
+	);
+
 	return (
-		<FlatList
-			ref={flatListRecommendation}
-			data={recommendations.data}
-			horizontal
-			pagingEnabled
-			showsHorizontalScrollIndicator={false}
-			renderItem={renderItemCharacter}
-			ItemSeparatorComponent={() => {
-				return (
-					<View
-						style={{
-							height: '100%',
-							width: 10,
-						}}
-					/>
-				);
-			}}
-			keyExtractor={(item) => item.entry.title}
-		/>
+		<>
+			{isLoading ? (
+				<FlatList
+					ref={flatListRecommendationLoading}
+					data={new Array(6)}
+					horizontal
+					pagingEnabled
+					showsHorizontalScrollIndicator={false}
+					renderItem={renderItemCharacterLoading}
+					ItemSeparatorComponent={() => {
+						return (
+							<View
+								style={{
+									height: '100%',
+									width: 10,
+								}}
+							/>
+						);
+					}}
+					keyExtractor={() => randomUUID()}
+				/>
+			) : (
+				<FlatList
+					ref={flatListRecommendation}
+					data={recommendations.data}
+					horizontal
+					pagingEnabled
+					showsHorizontalScrollIndicator={false}
+					renderItem={renderItemCharacter}
+					ItemSeparatorComponent={() => {
+						return (
+							<View
+								style={{
+									height: '100%',
+									width: 10,
+								}}
+							/>
+						);
+					}}
+					keyExtractor={() => randomUUID()}
+				/>
+			)}
+		</>
 	);
 };
 

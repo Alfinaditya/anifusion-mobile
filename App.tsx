@@ -28,8 +28,6 @@ const queryClient = new QueryClient();
 // const { RealmProvider } = SearchContext;
 
 export default function App() {
-	// const result = useQuery(Search);
-
 	const [fontsLoaded, fontError] = useFonts({
 		Quicksand_300Light,
 		Quicksand_400Regular,
@@ -40,9 +38,7 @@ export default function App() {
 	if (!fontsLoaded && !fontError) {
 		return null;
 	}
-	// if (!RealmProvider) {
-	// 	return null;
-	// }
+
 	return (
 		<>
 			<StatusBar style="auto" />
