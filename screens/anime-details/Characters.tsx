@@ -94,7 +94,7 @@ const Characters: React.FC<{ id: number }> = ({ id }) => {
 							/>
 						);
 					}}
-					keyExtractor={(item) => item.character.name}
+					keyExtractor={() => randomUUID()}
 				/>
 			)}
 		</>

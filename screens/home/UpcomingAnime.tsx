@@ -12,13 +12,14 @@ import { Skeleton } from 'moti/skeleton';
 import useAnimeStore from '../anime/AnimeStore';
 import { AnimeStackParamList } from '../../stacks/AnimeStack';
 import { NavigatorScreenParams } from '@react-navigation/native';
+import { MangaStackParamList } from '../../stacks/MangaStack';
 // import { RootStackParamList } from '../../App';
 type RootStackParamList = {
 	HomeStack: undefined;
 	AnimeStack: NavigatorScreenParams<AnimeStackParamList>;
+	MangaStack: NavigatorScreenParams<MangaStackParamList>;
 };
 type Props = NativeStackScreenProps<RootStackParamList, 'HomeStack'>;
-
 const UpcomingAnime: React.FC<Props> = ({ navigation, route }) => {
 	const setFilterParams = useAnimeStore((state) => state.setFilterParams);
 	const setPage = useAnimeStore((state) => state.setPage);
@@ -155,7 +156,7 @@ const UpcomingAnime: React.FC<Props> = ({ navigation, route }) => {
 								))}
 							</View>
 						) : (
-							<Text className="text-center">No Completed Anime</Text>
+							<Text className="text-center">No Upcoming Anime</Text>
 						)}
 					</>
 				)}

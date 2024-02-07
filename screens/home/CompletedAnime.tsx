@@ -6,20 +6,21 @@ import { apiUrl } from '../../lib/consts';
 import { cn } from '../../utils/tw';
 import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { HomeStackParamList } from '../../stacks/HomeStack';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import font from '../../utils/font';
 import { Skeleton } from 'moti/skeleton';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { AnimeStackParamList } from '../../stacks/AnimeStack';
+import { MangaStackParamList } from '../../stacks/MangaStack';
 import useAnimeStore from '../anime/AnimeStore';
 
 type RootStackParamList = {
 	HomeStack: undefined;
 	AnimeStack: NavigatorScreenParams<AnimeStackParamList>;
+	MangaStack: NavigatorScreenParams<MangaStackParamList>;
 };
-type Props = NativeStackScreenProps<RootStackParamList, 'HomeStack'>;
 
+type Props = NativeStackScreenProps<RootStackParamList, 'HomeStack'>;
 const CompletedAnime: React.FC<Props> = ({ navigation, route }) => {
 	const setFilterParams = useAnimeStore((state) => state.setFilterParams);
 	const setPage = useAnimeStore((state) => state.setPage);
@@ -59,8 +60,8 @@ const CompletedAnime: React.FC<Props> = ({ navigation, route }) => {
 						onPress={() => {
 							setFilterParams({
 								orderBy: '',
-								rating: '',
 								sort: '',
+								rating: '',
 								status: 'complete',
 								type: '',
 							});
@@ -80,7 +81,6 @@ const CompletedAnime: React.FC<Props> = ({ navigation, route }) => {
 						</Text>
 					</Pressable>
 				</View>
-
 				{isLoading ? (
 					<View className="flex-row flex-wrap justify-between">
 						{Array.from(Array(6).keys()).map((i) => (

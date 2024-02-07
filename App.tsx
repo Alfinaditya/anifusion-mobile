@@ -70,7 +70,11 @@ export default function App() {
 							headerShown: false,
 						})}
 					>
-						<Tab.Screen name="HomeStack" component={HomeStack} />
+						<Tab.Screen
+							options={{ tabBarLabel: 'Home' }}
+							name="HomeStack"
+							component={HomeStack}
+						/>
 						<Tab.Screen
 							options={{ tabBarLabel: 'Anime' }}
 							name="AnimeStack"

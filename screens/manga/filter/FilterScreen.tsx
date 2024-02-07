@@ -1,50 +1,52 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useRef, useState } from 'react';
-import { AnimeStackParamList } from '../../../stacks/AnimeStack';
 import { FlatList, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { cn } from '../../../utils/tw';
-
-import useAnimeStore from '../AnimeStore';
 import AppBar from '../../../components/AppBar';
 import font from '../../../utils/font';
+import { MangaStackParamList } from '../../../stacks/MangaStack';
+import useMangaStore from '../MangaStore';
 
-type Props = NativeStackScreenProps<AnimeStackParamList, 'AnimeFilter'>;
 const types = [
 	{
-		value: 'tv',
-		label: 'TV',
+		value: 'manga',
+		label: 'Manga',
 	},
 	{
-		value: 'movie',
-		label: 'Movie',
+		value: 'novel',
+		label: 'Novel',
 	},
 	{
-		value: 'ova',
-		label: 'Ova',
+		value: 'lightnovel',
+		label: 'Light Novel',
 	},
 	{
-		value: 'special',
-		label: 'Special',
+		value: 'oneshot',
+		label: 'One-Shot',
 	},
 	{
-		value: 'ona',
-		label: 'Ona',
+		value: 'doujin',
+		label: 'Doujin',
 	},
 	{
-		value: 'music',
-		label: 'Music',
+		value: 'manhwa',
+		label: 'Manhwa',
+	},
+	{
+		value: 'manhua',
+		label: 'Manhua',
 	},
 ];
 
 const orderByData = [
 	{
-		value: 'title',
-		label: 'Title',
+		value: 'chapters',
+		label: 'Chapters',
 	},
 	{
-		value: 'episodes',
-		label: 'Episode',
+		value: 'volumes',
+		label: 'Volumes',
 	},
 	{
 		value: 'score',
@@ -55,46 +57,31 @@ const orderByData = [
 		label: 'Favorite',
 	},
 	{
+		value: 'rank',
+		label: 'Rank',
+	},
+	{
 		value: 'popularity',
 		label: 'Popularity',
 	},
 ];
 
-const ratings = [
-	{
-		value: 'g',
-		label: 'G - All Ages',
-	},
-	{
-		value: 'pg',
-		label: 'PG - Children',
-	},
-	{
-		value: 'pg13',
-		label: 'PG-13 - Teens 13 or older',
-	},
-	{
-		value: 'r17',
-		label: 'R - 17+ (violence & profanity)',
-	},
-	{
-		value: 'r',
-		label: 'R+ - Mild Nudity',
-	},
-	{
-		value: 'rx',
-		label: 'Rx - Hentai',
-	},
-];
-
 const statuses = [
 	{
-		value: 'airing',
-		label: 'Airing',
+		value: 'publishing',
+		label: 'Publishing',
 	},
 	{
 		value: 'complete',
 		label: 'Complete',
+	},
+	{
+		value: 'hiatus',
+		label: 'Hiatus',
+	},
+	{
+		value: 'discontinued',
+		label: 'Discontinued',
 	},
 	{
 		value: 'upcoming',
@@ -117,21 +104,20 @@ interface FilterProps {
 	label: string;
 	value: string;
 }
+type Props = NativeStackScreenProps<MangaStackParamList, 'MangaFilter'>;
 const FilterScreen: React.FC<Props> = ({ navigation, route }) => {
-	const setFilterParams = useAnimeStore((state) => state.setFilterParams);
-	const resetFilter = useAnimeStore((state) => state.resetFilter);
-	const filterParams = useAnimeStore((state) => state.filterParams);
+	const setFilterParams = useMangaStore((state) => state.setFilterParams);
+	const resetFilter = useMangaStore((state) => state.resetFilter);
+	const filterParams = useMangaStore((state) => state.filterParams);
 	const flatListTypeRef = useRef<FlatList<FilterProps> | null>(null);
 	const flatListStatusRef = useRef<FlatList<FilterProps> | null>(null);
-	const flatListRatingRef = useRef<FlatList<FilterProps> | null>(null);
 	const flatListOrderByRef = useRef<FlatList<FilterProps> | null>(null);
 	const flatListSortRef = useRef<FlatList<FilterProps> | null>(null);
 	const [type, setType] = useState(filterParams.type);
 	const [status, setStatus] = useState(filterParams.status);
-	const [rating, setRating] = useState(filterParams.rating);
 	const [orderBy, setOrderBy] = useState(filterParams.orderBy);
 	const [sort, setSort] = useState(filterParams.sort);
-	const isReadyToFilter = type || status || rating || orderBy || sort;
+	const isReadyToFilter = type || status || orderBy || sort;
 
 	const renderItemType = ({ item }: { item: FilterProps }) => (
 		<FilterButton
@@ -149,14 +135,14 @@ const FilterScreen: React.FC<Props> = ({ navigation, route }) => {
 			label={item.label}
 		/>
 	);
-	const renderItemRating = ({ item }: { item: FilterProps }) => (
-		<FilterButton
-			isActive={item.value === rating}
-			activeClassName="bg-secondary"
-			onPress={() => setRating(item.value)}
-			label={item.label}
-		/>
-	);
+	// const renderItemRating = ({ item }: { item: FilterProps }) => (
+	// 	<FilterButton
+	// 		isActive={item.value === rating}
+	// 		activeClassName="bg-secondary"
+	// 		onPress={() => setRating(item.value)}
+	// 		label={item.label}
+	// 	/>
+	// );
 	const renderItemOrderBy = ({ item }: { item: FilterProps }) => (
 		<FilterButton
 			isActive={item.value === orderBy}
@@ -176,7 +162,6 @@ const FilterScreen: React.FC<Props> = ({ navigation, route }) => {
 	function handleReset() {
 		setType('');
 		setStatus('');
-		setRating('');
 		setOrderBy('');
 		setSort('');
 		resetFilter();
@@ -186,11 +171,10 @@ const FilterScreen: React.FC<Props> = ({ navigation, route }) => {
 			setFilterParams({
 				type,
 				status,
-				rating,
 				orderBy,
 				sort,
 			});
-			return navigation.push('Anime');
+			return navigation.push('Manga');
 		}
 	}
 	return (
@@ -246,7 +230,7 @@ const FilterScreen: React.FC<Props> = ({ navigation, route }) => {
 							keyExtractor={(item) => item.value}
 						/>
 					</View>
-					<View>
+					{/* <View>
 						<Text className="mb-4 ml-4">Rating</Text>
 						<FlatList
 							ref={flatListRatingRef}
@@ -257,7 +241,7 @@ const FilterScreen: React.FC<Props> = ({ navigation, route }) => {
 							renderItem={renderItemRating}
 							keyExtractor={(item) => item.value}
 						/>
-					</View>
+					</View> */}
 					<View>
 						<Text className="mb-4 ml-4">Order By</Text>
 						<FlatList

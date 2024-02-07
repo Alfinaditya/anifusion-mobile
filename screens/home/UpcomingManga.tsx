@@ -3,16 +3,27 @@ import React from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 import { apiUrl } from '../../lib/consts';
 import { cn } from '../../utils/tw';
-import Mangas from '../../types/mangas';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import axios from 'axios';
-import { HomeStackParamList } from '../../stacks/HomeStack';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import font from '../../utils/font';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Skeleton } from 'moti/skeleton';
+import { NavigatorScreenParams } from '@react-navigation/native';
+import { MangaStackParamList } from '../../stacks/MangaStack';
+import useMangaStore from '../manga/MangaStore';
+import Mangas from '../../types/mangas';
+import { AnimeStackParamList } from '../../stacks/AnimeStack';
 
-type Props = NativeStackScreenProps<HomeStackParamList, 'Home'>;
+type RootStackParamList = {
+	HomeStack: undefined;
+	AnimeStack: NavigatorScreenParams<AnimeStackParamList>;
+	MangaStack: NavigatorScreenParams<MangaStackParamList>;
+};
+type Props = NativeStackScreenProps<RootStackParamList, 'HomeStack'>;
 const UpcomingManga: React.FC<Props> = ({ navigation, route }) => {
+	const setFilterParams = useMangaStore((state) => state.setFilterParams);
+	const setPage = useMangaStore((state) => state.setPage);
+	const setQuery = useMangaStore((state) => state.setQuery);
 	const {
 		isLoading,
 		error,
@@ -30,20 +41,44 @@ const UpcomingManga: React.FC<Props> = ({ navigation, route }) => {
 	return (
 		<View className="justify-center items-center mb-14">
 			<View className="w-[95%]">
-				<Text
-					style={{ fontFamily: font.quicksand.bold }}
-					className="text-2xl mb-4"
-					numberOfLines={2}
-				>
+				<View className="flex-row items-center justify-between mb-4">
 					<Text
 						style={{ fontFamily: font.quicksand.bold }}
-						className="text-2xl text-main"
+						className="text-2xl "
+						numberOfLines={2}
 					>
-						Upcoming{' '}
+						<Text
+							style={{ fontFamily: font.quicksand.bold }}
+							className="text-2xl text-main"
+						>
+							Upcoming{' '}
+						</Text>
+						Manga
 					</Text>
-					Manga
-				</Text>
-
+					<Pressable
+						onPress={() => {
+							setFilterParams({
+								orderBy: '',
+								sort: '',
+								status: 'upcoming',
+								type: '',
+							});
+							setQuery({ query: '' });
+							setPage({ page: 1 });
+							navigation.navigate('MangaStack', {
+								screen: 'Manga',
+							});
+						}}
+						className="active:bg-gray-300"
+					>
+						<Text
+							style={{ fontFamily: font.quicksand.medium }}
+							className="text-main"
+						>
+							See All
+						</Text>
+					</Pressable>
+				</View>
 				{isLoading ? (
 					<View className="flex-row flex-wrap justify-between">
 						{Array.from(Array(6).keys()).map((i) => (
@@ -71,7 +106,10 @@ const UpcomingManga: React.FC<Props> = ({ navigation, route }) => {
 									<Pressable
 										key={manga.mal_id}
 										onPress={() =>
-											navigation.push('AnimeDetails', { id: manga.mal_id })
+											navigation.navigate('MangaStack', {
+												screen: 'MangaDetails',
+												params: { id: manga.mal_id },
+											})
 										}
 										className={cn(
 											'rounded-lg',
@@ -114,7 +152,7 @@ const UpcomingManga: React.FC<Props> = ({ navigation, route }) => {
 								))}
 							</View>
 						) : (
-							<Text className="text-center">No Completed Anime</Text>
+							<Text className="text-center">No Upcoming Manga</Text>
 						)}
 					</>
 				)}

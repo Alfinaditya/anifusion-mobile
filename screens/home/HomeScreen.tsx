@@ -9,11 +9,13 @@ import { HomeStackParamList } from '../../stacks/HomeStack';
 import CompletedManga from './CompletedManga';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { AnimeStackParamList } from '../../stacks/AnimeStack';
+import { MangaStackParamList } from '../../stacks/MangaStack';
 // import UpcomingManga from './UpcomingManga';
 
 type RootStackParamList = {
 	HomeStack: undefined;
 	AnimeStack: NavigatorScreenParams<AnimeStackParamList>;
+	MangaStack: NavigatorScreenParams<MangaStackParamList>;
 };
 type Props = NativeStackScreenProps<RootStackParamList, 'HomeStack'>;
 
@@ -29,9 +31,8 @@ const HomeScreen: React.FC<Props> = ({ navigation, route }) => {
 			>
 				<UpcomingAnime navigation={navigation} route={route} />
 				<CompletedAnime navigation={navigation} route={route} />
-				{/* <CompletedAnime navigation={navigation} route={route} />
 				<UpcomingManga navigation={navigation} route={route} />
-				<CompletedManga navigation={navigation} route={route} /> */}
+				<CompletedManga navigation={navigation} route={route} />
 			</ScrollView>
 		</SafeAreaView>
 	);

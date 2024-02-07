@@ -6,13 +6,24 @@ import { cn } from '../../utils/tw';
 import Mangas from '../../types/mangas';
 import axios from 'axios';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { HomeStackParamList } from '../../stacks/HomeStack';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Skeleton } from 'moti/skeleton';
 import font from '../../utils/font';
+import { NavigatorScreenParams } from '@react-navigation/native';
+import { AnimeStackParamList } from '../../stacks/AnimeStack';
+import { MangaStackParamList } from '../../stacks/MangaStack';
+import useMangaStore from '../manga/MangaStore';
 
-type Props = NativeStackScreenProps<HomeStackParamList, 'Home'>;
-const CompletedManga: React.FC<Props> = ({ navigation, route }) => {
+type RootStackParamList = {
+	HomeStack: undefined;
+	AnimeStack: NavigatorScreenParams<AnimeStackParamList>;
+	MangaStack: NavigatorScreenParams<MangaStackParamList>;
+};
+type Props = NativeStackScreenProps<RootStackParamList, 'HomeStack'>;
+const UpcomingManga: React.FC<Props> = ({ navigation, route }) => {
+	const setFilterParams = useMangaStore((state) => state.setFilterParams);
+	const setPage = useMangaStore((state) => state.setPage);
+	const setQuery = useMangaStore((state) => state.setQuery);
 	const {
 		isLoading,
 		error,
@@ -21,29 +32,53 @@ const CompletedManga: React.FC<Props> = ({ navigation, route }) => {
 		queryKey: ['completedManga'],
 		queryFn: () =>
 			axios
-				.get(`${apiUrl}/manga?status=complete&limit=15`)
+				.get(`${apiUrl}/manga?status=complete&limit=6`)
 				.then((res) => res.data),
 	});
 
 	if (error) return <Text>{error.message}</Text>;
 
 	return (
-		<View className="justify-center items-center">
+		<View className="justify-center items-center mb-14">
 			<View className="w-[95%]">
-				<Text
-					style={{ fontFamily: font.quicksand.bold }}
-					className="text-2xl mb-4"
-					numberOfLines={2}
-				>
+				<View className="flex-row items-center justify-between mb-4">
 					<Text
 						style={{ fontFamily: font.quicksand.bold }}
-						className="text-2xl text-main"
+						className="text-2xl "
+						numberOfLines={2}
 					>
-						Completed{' '}
+						<Text
+							style={{ fontFamily: font.quicksand.bold }}
+							className="text-2xl text-main"
+						>
+							Completed{' '}
+						</Text>
+						Manga
 					</Text>
-					Manga
-				</Text>
-
+					<Pressable
+						onPress={() => {
+							setFilterParams({
+								orderBy: '',
+								sort: '',
+								status: 'complete',
+								type: '',
+							});
+							setQuery({ query: '' });
+							setPage({ page: 1 });
+							navigation.navigate('MangaStack', {
+								screen: 'Manga',
+							});
+						}}
+						className="active:bg-gray-300"
+					>
+						<Text
+							style={{ fontFamily: font.quicksand.medium }}
+							className="text-main"
+						>
+							See All
+						</Text>
+					</Pressable>
+				</View>
 				{isLoading ? (
 					<View className="flex-row flex-wrap justify-between">
 						{Array.from(Array(6).keys()).map((i) => (
@@ -71,7 +106,10 @@ const CompletedManga: React.FC<Props> = ({ navigation, route }) => {
 									<Pressable
 										key={manga.mal_id}
 										onPress={() =>
-											navigation.push('AnimeDetails', { id: manga.mal_id })
+											navigation.navigate('MangaStack', {
+												screen: 'MangaDetails',
+												params: { id: manga.mal_id },
+											})
 										}
 										className={cn(
 											'rounded-lg',
@@ -96,6 +134,7 @@ const CompletedManga: React.FC<Props> = ({ navigation, route }) => {
 											>
 												{manga.title}
 											</Text>
+
 											<View className="flex-row items-center">
 												<Ionicons
 													color={'#E46295'}
@@ -114,7 +153,7 @@ const CompletedManga: React.FC<Props> = ({ navigation, route }) => {
 								))}
 							</View>
 						) : (
-							<Text className="text-center">No Completed Anime</Text>
+							<Text className="text-center">No Completed Manga</Text>
 						)}
 					</>
 				)}
@@ -123,4 +162,4 @@ const CompletedManga: React.FC<Props> = ({ navigation, route }) => {
 	);
 };
 
-export default CompletedManga;
+export default UpcomingManga;

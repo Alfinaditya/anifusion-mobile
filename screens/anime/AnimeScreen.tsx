@@ -1,8 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useRef, useState } from 'react';
 import {
-	Button,
-	Dimensions,
 	FlatList,
 	Image,
 	Pressable,
@@ -12,12 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AnimeStackParamList } from '../../stacks/AnimeStack';
-import {
-	QueryClient,
-	useInfiniteQuery,
-	useQuery,
-	useQueryClient,
-} from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import Animes, { Anime } from '../../types/animes';
 import { apiUrl } from '../../lib/consts';
 import { cn } from '../../utils/tw';
@@ -42,7 +35,6 @@ const AnimeScreen: React.FC<Props> = ({ navigation, route }) => {
 	const filterParams = useAnimeStore((state) => state.filterParams);
 	const page = useAnimeStore((state) => state.page);
 	const setPage = useAnimeStore((state) => state.setPage);
-	const queryClient = useQueryClient();
 
 	const API_URL = `${apiUrl}/anime`;
 	async function fetchAnime({ pageParam = 1 }) {
@@ -64,11 +56,11 @@ const AnimeScreen: React.FC<Props> = ({ navigation, route }) => {
 
 	const {
 		data: animes,
-		error,
+		// error,
 		fetchNextPage,
-		hasNextPage,
-		isFetching,
-		isFetchingNextPage,
+		// hasNextPage,
+		// isFetching,
+		// isFetchingNextPage,
 		isLoading,
 		refetch,
 	} = useInfiniteQuery<Animes, Error>({
@@ -169,7 +161,7 @@ const AnimeScreen: React.FC<Props> = ({ navigation, route }) => {
 							className={`block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
 							placeholder="Search Anime"
 							defaultValue={query}
-							onPressIn={() => navigation.push('Search')}
+							onPressIn={() => navigation.push('AnimeSearch')}
 						/>
 					</View>
 				</View>
@@ -177,7 +169,7 @@ const AnimeScreen: React.FC<Props> = ({ navigation, route }) => {
 			<View className="justify-center items-center mb-2">
 				<View className="w-[95%]">
 					<Pressable
-						onPress={() => navigation.push('Filter')}
+						onPress={() => navigation.push('AnimeFilter')}
 						className={cn(
 							'bg-main',
 							'active:bg-main/80',
