@@ -13,6 +13,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Skeleton } from 'moti/skeleton';
 import { randomUUID } from 'expo-crypto';
 import { MangaStackParamList } from '../../stacks/MangaStack';
+import { cn } from '../../utils/tw';
+
 type Props = NativeStackScreenProps<MangaStackParamList, 'MangaDetails'>;
 const Recommendations: React.FC<Props & { id: number }> = ({
 	id,
@@ -50,11 +52,11 @@ const Recommendations: React.FC<Props & { id: number }> = ({
 			/>
 			<Text
 				style={{ fontFamily: font.quicksand.bold }}
-				className="w-[200px] mt-3"
+				className={cn('w-[200px]', 'mt-3')}
 			>
 				{item.entry.title}
 			</Text>
-			<View className="flex-row items-center mt-2">
+			<View className={cn('flex-row items-center', 'mt-2')}>
 				<MaterialCommunityIcons
 					name="thumb-up-outline"
 					size={24}

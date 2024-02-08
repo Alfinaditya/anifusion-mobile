@@ -5,7 +5,6 @@ import { ScrollView } from 'react-native';
 import CompletedAnime from './CompletedAnime';
 import UpcomingManga from './UpcomingManga';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { HomeStackParamList } from '../../stacks/HomeStack';
 import CompletedManga from './CompletedManga';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { AnimeStackParamList } from '../../stacks/AnimeStack';

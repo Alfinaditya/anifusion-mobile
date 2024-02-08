@@ -7,6 +7,7 @@ import { AntDesign, Feather } from '@expo/vector-icons';
 import db from '../../../lib/db';
 import useMangaStore from '../MangaStore';
 import { MangaStackParamList } from '../../../stacks/MangaStack';
+import { cn } from '../../../utils/tw';
 
 interface Search {
 	id: number;
@@ -76,17 +77,21 @@ const SearchScreen: React.FC<Props> = ({ navigation }) => {
 	return (
 		<SafeAreaView>
 			<View className="px-3">
-				<View className="mb-2 w-full">
-					<View className="flex-row items-center mb-4">
+				<View className={cn('mb-2', 'w-full')}>
+					<View className={cn('flex-row items-center', 'mb-4')}>
 						<Pressable
 							onPress={() => navigation.goBack()}
-							className="active:bg-gray-300 mr-3"
+							className={cn('active:bg-gray-300', 'mr-3')}
 						>
 							<AntDesign name="arrowleft" size={24} color="black" />
 						</Pressable>
-						<View className={`relative flex-1`}>
+						<View className={cn('relative', 'flex-1')}>
 							<View
-								className={`absolute top-[25%] left-1 flex items-center pointer-events-none z-10`}
+								className={cn(
+									'absolute top-[25%] left-1 z-10',
+									'flex items-center',
+									'pointer-events-none'
+								)}
 							>
 								<Ionicons
 									name={'ios-search-outline'}
@@ -95,7 +100,15 @@ const SearchScreen: React.FC<Props> = ({ navigation }) => {
 								/>
 							</View>
 							<TextInput
-								className={`block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
+								className={cn(
+									'block',
+									'w-full',
+									'p-4 pl-10',
+									'text-sm text-gray-900',
+									'border border-gray-300 rounded-lg',
+									'bg-gray-50',
+									'focus:ring-main focus:border-main'
+								)}
 								placeholder="Search Manga"
 								defaultValue={query}
 								onSubmitEditing={(e) => handleSubmit(e.nativeEvent.text)}
@@ -105,7 +118,10 @@ const SearchScreen: React.FC<Props> = ({ navigation }) => {
 					{searchList &&
 						searchList.length > 0 &&
 						searchList.map((search) => (
-							<View className="flex-row mb-2 justify-between" key={search.id}>
+							<View
+								className={cn('flex-row justify-between', 'mb-2')}
+								key={search.id}
+							>
 								<Pressable
 									className="active:bg-gray-200"
 									onPress={() => handleCurrentSearch(search.query)}

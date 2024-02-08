@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react';
 import { Pressable, Text } from 'react-native';
 import { View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { cn } from '../utils/tw';
 
 interface Props {
 	backAction: () => void;
@@ -13,7 +14,7 @@ const AppBar: React.FC<Props> = ({ backAction, actions }) => {
 		<View className="flex-row justify-between items-center">
 			<Pressable
 				onPress={backAction}
-				className="flex-row items-center active:bg-gray-300"
+				className={cn('flex-row items-center', 'active:bg-gray-300')}
 			>
 				<MaterialIcons name="arrow-back-ios" size={24} color="black" />
 				<Text>Back</Text>

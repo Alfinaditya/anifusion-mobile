@@ -179,32 +179,34 @@ const FilterScreen: React.FC<Props> = ({ navigation, route }) => {
 	}
 	return (
 		<SafeAreaView>
-			<View className="mx-3">
-				<AppBar
-					backAction={() => {
-						navigation.goBack();
-					}}
-					actions={
-						<>
-							<Pressable
-								className="active:bg-gray-300"
-								onPress={() => isReadyToFilter && handleReset()}
-							>
-								<Text
-									style={{ fontFamily: 'Quicksand_700Bold' }}
-									className={cn(
-										'font-bold',
-										isReadyToFilter ? 'text-main' : 'text-gray-500'
-									)}
+			<View className="justify-center items-center">
+				<View className="w-[95%]">
+					<AppBar
+						backAction={() => {
+							navigation.goBack();
+						}}
+						actions={
+							<>
+								<Pressable
+									className="active:bg-gray-300"
+									onPress={() => isReadyToFilter && handleReset()}
 								>
-									Reset
-								</Text>
-							</Pressable>
-						</>
-					}
-				/>
+									<Text
+										style={{ fontFamily: font.quicksand.bold }}
+										className={cn(
+											'font-bold',
+											isReadyToFilter ? 'text-main' : 'text-gray-500'
+										)}
+									>
+										Reset
+									</Text>
+								</Pressable>
+							</>
+						}
+					/>
+				</View>
 			</View>
-			<View className="flex-row gap-x-2 mt-5">
+			<View className={cn('flex-row gap-x-2', 'mt-5')}>
 				<ScrollView>
 					<Text className="mb-4 ml-4">Type</Text>
 					<View>
@@ -268,22 +270,28 @@ const FilterScreen: React.FC<Props> = ({ navigation, route }) => {
 					</View>
 				</ScrollView>
 			</View>
-			<View className="mx-3">
-				<Pressable
-					onPress={handleSubmit}
-					className={cn(
-						'w-full mt-10  rounded-xl h-12 px-4 active:bg-main/80 ',
-						isReadyToFilter ? 'bg-main' : 'bg-gray-300'
-					)}
-					disabled={!isReadyToFilter}
-				>
-					<Text
-						style={{ fontFamily: 'Quicksand_700Bold' }}
-						className="text-white text-center m-auto"
+			<View className="justify-center items-center">
+				<View className="w-[95%]">
+					<Pressable
+						onPress={handleSubmit}
+						className={cn(
+							'w-full h-12',
+							'mt-10',
+							'rounded-xl',
+							'px-4',
+							'active:bg-main/80',
+							isReadyToFilter ? 'bg-main' : 'bg-gray-300'
+						)}
+						disabled={!isReadyToFilter}
 					>
-						Submit
-					</Text>
-				</Pressable>
+						<Text
+							style={{ fontFamily: font.quicksand.bold }}
+							className={cn('text-white text-center', 'm-auto')}
+						>
+							Submit
+						</Text>
+					</Pressable>
+				</View>
 			</View>
 		</SafeAreaView>
 	);
@@ -298,13 +306,19 @@ const FilterButton: React.FC<{
 		<Pressable
 			onPress={onPress}
 			className={cn(
-				'bg-main min-w-[71px] flex-row items-center w-min self-start rounded-full mb-2 h-12 mr-2 px-4 active:bg-main/80',
+				'bg-main',
+				'min-w-[71px] w-min h-12',
+				'flex-row items-center self-start',
+				'rounded-full',
+				'mb-2 mr-2',
+				'px-4',
+				'active:bg-main/80',
 				isActive && activeClassName
 			)}
 		>
 			<Text
 				style={{ fontFamily: font.quicksand.medium }}
-				className="text-white text-center m-auto"
+				className={cn('text-white text-center', 'm-auto')}
 			>
 				{label}
 			</Text>

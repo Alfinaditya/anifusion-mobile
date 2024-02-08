@@ -43,10 +43,20 @@ const AnimeDetailsScreen: React.FC<Props> = ({ navigation, route }) => {
 	if (error) return <Text>{error.message}</Text>;
 
 	const renderItemGenre = ({ item }: { item: AnimeGenre }) => (
-		<View className="bg-main flex-1 min-w-[71px] flex-row items-center m-auto self-start rounded-full h-10 mr-2 mt-4 px-4 active:bg-main/80">
+		<View
+			className={cn(
+				'bg-main',
+				'flex-1 flex-row items-center self-start',
+				'min-w-[71px] h-10',
+				'm-auto mr-2 mt-4',
+				'rounded-full',
+				'px-4',
+				'active:bg-main/80'
+			)}
+		>
 			<Text
 				style={{ fontFamily: font.quicksand.medium }}
-				className="text-white text-center m-auto"
+				className={cn('text-white text-center', 'm-auto')}
 			>
 				{item.name}
 			</Text>
@@ -81,13 +91,13 @@ const AnimeDetailsScreen: React.FC<Props> = ({ navigation, route }) => {
 								<View className="mb-3">
 									<Skeleton width={'100%'} height={70} colorMode="light" />
 								</View>
-								<View className="justify-center items-center mb-5">
+								<View className={cn('justify-center items-center', 'mb-5')}>
 									<Skeleton width={'60%'} height={60} colorMode="light" />
 								</View>
-								<View className="justify-center items-center mb-5">
+								<View className={cn('justify-center items-center', 'mb-5')}>
 									<Skeleton width={'100%'} height={300} colorMode="light" />
 								</View>
-								<View className="justify-center items-center mb-5">
+								<View className={cn('justify-center items-center', 'mb-5')}>
 									<Skeleton width={'100%'} height={30} colorMode="light" />
 								</View>
 								<View className="mb-5">
@@ -113,9 +123,8 @@ const AnimeDetailsScreen: React.FC<Props> = ({ navigation, route }) => {
 									style={{ fontFamily: font.quicksand.bold }}
 									className={cn(
 										'font-medium',
-										' text-3xl text-center',
-										'mb-5',
-										'mt-5'
+										'text-3xl text-center',
+										'mb-5 mt-5'
 									)}
 								>
 									{anime.data.title}
@@ -136,7 +145,9 @@ const AnimeDetailsScreen: React.FC<Props> = ({ navigation, route }) => {
 										}}
 									/>
 								</Pressable>
-								<View className="bg-main p-4 mt-5 mb-3 rounded-xl">
+								<View
+									className={cn('bg-main', 'p-4', 'mt-5 mb-3', 'rounded-xl')}
+								>
 									<Text
 										style={{ fontFamily: font.quicksand.medium }}
 										className="text-white text-center text-xl"

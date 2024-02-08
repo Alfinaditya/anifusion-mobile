@@ -6,6 +6,7 @@ import { FlatList, Image, Text, View } from 'react-native';
 import font from '../../utils/font';
 import { Skeleton } from 'moti/skeleton';
 import { randomUUID } from 'expo-crypto';
+import { cn } from '../../utils/tw';
 
 const Characters: React.FC<{ id: number }> = ({ id }) => {
 	const API_URL = `${apiUrl}/manga/${id}/characters`;
@@ -32,7 +33,7 @@ const Characters: React.FC<{ id: number }> = ({ id }) => {
 			/>
 			<Text
 				style={{ fontFamily: font.quicksand.bold }}
-				className="w-[200px] mt-3"
+				className={cn('w-[200px]', 'mt-3')}
 			>
 				{item.character.name}
 			</Text>

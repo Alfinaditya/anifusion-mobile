@@ -39,12 +39,12 @@ const UpcomingAnime: React.FC<Props> = ({ navigation, route }) => {
 	if (error) return <Text>{error.message}</Text>;
 
 	return (
-		<View className="justify-center items-center mb-14">
+		<View className={cn('justify-center items-center', 'mb-14')}>
 			<View className="w-[95%]">
-				<View className="flex-row items-center justify-between mb-4">
+				<View className={cn('flex-row items-center justify-between', 'mb-4')}>
 					<Text
 						style={{ fontFamily: font.quicksand.bold }}
-						className="text-2xl "
+						className="text-2xl"
 						numberOfLines={2}
 					>
 						<Text
@@ -83,7 +83,7 @@ const UpcomingAnime: React.FC<Props> = ({ navigation, route }) => {
 				{isLoading ? (
 					<View className="flex-row flex-wrap justify-between">
 						{Array.from(Array(6).keys()).map((i) => (
-							<View key={i} className="w-[46vw] mb-4">
+							<View key={i} className={cn('w-[46vw]', 'mb-4')}>
 								<View>
 									<Skeleton width={'100%'} height={190} colorMode="light" />
 								</View>
@@ -127,7 +127,7 @@ const UpcomingAnime: React.FC<Props> = ({ navigation, route }) => {
 												uri: anime.images.jpg.image_url,
 											}}
 										/>
-										<View className="mt-2 ">
+										<View className="mt-2">
 											<Text
 												numberOfLines={1}
 												style={{ fontFamily: font.quicksand.bold }}
@@ -146,7 +146,7 @@ const UpcomingAnime: React.FC<Props> = ({ navigation, route }) => {
 												/>
 												<Text
 													style={{ fontFamily: font.quicksand.bold }}
-													className="ml-2 text-main"
+													className={cn('ml-2', 'text-main')}
 												>
 													{anime.score ? anime.score : '-'}
 												</Text>

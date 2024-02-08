@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AnimeStackParamList } from '../../stacks/AnimeStack';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import Animes, { Anime } from '../../types/animes';
 import { apiUrl } from '../../lib/consts';
 import { cn } from '../../utils/tw';
@@ -124,7 +124,7 @@ const AnimeScreen: React.FC<Props> = ({ navigation, route }) => {
 		</Pressable>
 	);
 	const renderItemLoading = () => (
-		<View className="w-[46vw] mb-4">
+		<View className={cn('w-[46vw]', 'mb-4')}>
 			<View>
 				<Skeleton width={'100%'} height={190} colorMode="light" />
 			</View>
@@ -145,11 +145,15 @@ const AnimeScreen: React.FC<Props> = ({ navigation, route }) => {
 	// if (error) return <Text>{error.message}</Text>;
 	return (
 		<SafeAreaView>
-			<View className="justify-center items-center mb-4">
+			<View className={cn('justify-center items-center', 'mb-4')}>
 				<View className="w-[95%]">
 					<View className={`relative`}>
 						<View
-							className={`absolute top-[25%] left-1 flex items-center pointer-events-none z-10`}
+							className={cn(
+								'absolute top-[25%] left-1 z-10',
+								'flex items-center',
+								'pointer-events-none'
+							)}
 						>
 							<Ionicons
 								name={'ios-search-outline'}
@@ -158,7 +162,15 @@ const AnimeScreen: React.FC<Props> = ({ navigation, route }) => {
 							/>
 						</View>
 						<TextInput
-							className={`block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
+							className={cn(
+								'block',
+								'w-full',
+								'p-4 pl-10',
+								'text-sm text-gray-900',
+								'border border-gray-300 rounded-lg',
+								'bg-gray-50',
+								'focus:ring-main focus:border-main'
+							)}
 							placeholder="Search Anime"
 							defaultValue={query}
 							onPressIn={() => navigation.push('AnimeSearch')}
@@ -166,7 +178,7 @@ const AnimeScreen: React.FC<Props> = ({ navigation, route }) => {
 					</View>
 				</View>
 			</View>
-			<View className="justify-center items-center mb-2">
+			<View className={cn('justify-center items-center', 'mb-2')}>
 				<View className="w-[95%]">
 					<Pressable
 						onPress={() => navigation.push('AnimeFilter')}
@@ -181,7 +193,7 @@ const AnimeScreen: React.FC<Props> = ({ navigation, route }) => {
 					>
 						<Ionicons name="ios-filter-outline" color={'white'} size={24} />
 						<Text
-							className="ml-2 text-white"
+							className={cn('ml-2', 'text-white')}
 							style={{ fontFamily: font.quicksand.semiBold }}
 						>
 							Filter
