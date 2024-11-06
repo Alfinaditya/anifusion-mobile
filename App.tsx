@@ -1,5 +1,6 @@
+import './global.css';
 import { StyleSheet } from 'react-native';
-import HomeScreen from './screens/home/HomeScreen';
+// import HomeScreen from './screens/home/HomeScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AnimeStack from './stacks/AnimeStack';

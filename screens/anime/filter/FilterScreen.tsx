@@ -291,10 +291,10 @@ const FilterScreen: React.FC<Props> = ({ navigation, route }) => {
 					<Pressable
 						onPress={handleSubmit}
 						className={cn(
-							'w-full h-12',
-							'mt-10 ',
+							'w-full',
+							'mt-10',
 							'rounded-xl',
-							'px-4',
+							'p-4',
 							'active:bg-main/80 ',
 							isReadyToFilter ? 'bg-main' : 'bg-gray-300'
 						)}
@@ -323,11 +323,11 @@ const FilterButton: React.FC<{
 			onPress={onPress}
 			className={cn(
 				'bg-main',
-				'min-w-[71px] w-min h-12',
-				'flex-row items-center self-start',
+				'min-w-[71px] w-min',
+				'items-center justify-center',
 				'rounded-full',
 				'mb-2 mr-2',
-				'px-4',
+				'p-4',
 				'active:bg-main/80',
 				isActive && activeClassName
 			)}
